@@ -125,39 +125,6 @@ h1 {
 	transform: scale(0.95);
 }
 
-.filters {
-	display: flex;
-	gap: 0.25rem;
-	margin-bottom: 1rem;
-	padding: 0.25rem;
-	background: var(--surface);
-	border-radius: 10px;
-	box-shadow: var(--shadow);
-}
-
-.filter-btn {
-	flex: 1;
-	background: transparent;
-	border: none;
-	padding: 0.5rem;
-	font-size: 0.875rem;
-	font-weight: 500;
-	color: var(--text-muted);
-	cursor: pointer;
-	border-radius: 7px;
-	font-family: inherit;
-	transition: background 0.15s, color 0.15s;
-}
-
-.filter-btn:hover {
-	color: var(--text);
-}
-
-.filter-btn.active {
-	background: var(--bg);
-	color: var(--text);
-}
-
 .todo-list {
 	list-style: none;
 	background: var(--surface);

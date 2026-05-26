@@ -1,3 +1,8 @@
+/**
+ * Todo app with local storage persistence.
+ * Terminology: todos are referred to as either "completed" or "uncompleted"
+ * (based on the `done` property).
+ */
 (() => {
 	const STORAGE_KEY = 'todo.items';
 	const THEME_KEY = 'todo.theme';
@@ -5,7 +10,6 @@
 	const form = document.getElementById('todoForm');
 	const input = document.getElementById('todoInput');
 	const list = document.getElementById('todoList');
-	const filters = document.getElementById('filters');
 	const footer = document.getElementById('footer');
 	const countEl = document.getElementById('count');
 	const clearBtn = document.getElementById('clearCompleted');
@@ -13,7 +17,6 @@
 	const themeToggle = document.getElementById('themeToggle');
 
 	let todos = load();
-	let filter = 'all';
 
 	function load() {
 		try {
@@ -32,12 +35,8 @@
 	}
 
 	function render() {
-		const visible = todos.filter(t =>
-			filter === 'all' ? true : filter === 'active' ? !t.done : t.done
-		);
-
 		list.innerHTML = '';
-		for (const t of visible) {
+		for (const t of todos) {
 			const li = document.createElement('li');
 			li.className = 'todo-item' + (t.done ? ' done' : '');
 			li.dataset.id = t.id;
@@ -63,15 +62,8 @@
 		const remaining = todos.filter(t => !t.done).length;
 		countEl.textContent = `${remaining} ${remaining === 1 ? 'item' : 'items'} left`;
 		footer.hidden = todos.length === 0;
-		emptyEl.hidden = visible.length > 0;
-		if (visible.length === 0 && todos.length > 0) {
-			emptyEl.textContent = filter === 'completed'
-				? 'No completed tasks yet.'
-				: 'All done! Nice work.';
-			emptyEl.hidden = false;
-		} else if (todos.length === 0) {
-			emptyEl.textContent = 'Nothing to do. Add your first task above.';
-		}
+		emptyEl.hidden = todos.length > 0;
+		emptyEl.textContent = 'Nothing to do. Add your first task above.';
 	}
 
 	form.addEventListener('submit', e => {
@@ -100,16 +92,6 @@
 			save();
 			render();
 		}
-	});
-
-	filters.addEventListener('click', e => {
-		const btn = e.target.closest('.filter-btn');
-		if (!btn) return;
-		filter = btn.dataset.filter;
-		filters.querySelectorAll('.filter-btn').forEach(b =>
-			b.classList.toggle('active', b === btn)
-		);
-		render();
 	});
 
 	clearBtn.addEventListener('click', () => {
