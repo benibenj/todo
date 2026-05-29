@@ -7,14 +7,14 @@
 	const STORAGE_KEY = 'todo.items';
 	const THEME_KEY = 'todo.theme';
 
-	const form = document.getElementById('todoForm');
-	const input = document.getElementById('todoInput');
-	const list = document.getElementById('todoList');
-	const footer = document.getElementById('footer');
-	const countEl = document.getElementById('count');
-	const clearBtn = document.getElementById('clearCompleted');
-	const emptyEl = document.getElementById('empty');
-	const themeToggle = document.getElementById('themeToggle');
+	const form = document.querySelector('#todoForm');
+	const input = document.querySelector('#todoInput');
+	const list = document.querySelector('#todoList');
+	const footer = document.querySelector('#footer');
+	const countEl = document.querySelector('#count');
+	const clearBtn = document.querySelector('#clearCompleted');
+	const emptyEl = document.querySelector('#empty');
+	const themeToggle = document.querySelector('#themeToggle');
 
 	let todos = load();
 
