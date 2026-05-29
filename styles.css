@@ -125,6 +125,35 @@ h1 {
 	transform: scale(0.95);
 }
 
+.filter-buttons {
+	display: flex;
+	gap: 0.5rem;
+	margin-bottom: 1rem;
+	justify-content: center;
+}
+
+.filter-btn {
+	background: var(--surface);
+	border: 1px solid var(--border);
+	color: var(--text);
+	border-radius: 8px;
+	padding: 0.5rem 1rem;
+	font-size: 0.875rem;
+	cursor: pointer;
+	font-family: inherit;
+	transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+
+.filter-btn:hover {
+	background: var(--surface-hover);
+}
+
+.filter-btn.active {
+	background: var(--accent);
+	color: white;
+	border-color: var(--accent);
+}
+
 .todo-list {
 	list-style: none;
 	background: var(--surface);

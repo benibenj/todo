@@ -6,6 +6,7 @@
 (() => {
 	const STORAGE_KEY = 'todo.items';
 	const THEME_KEY = 'todo.theme';
+	const FILTER_KEY = 'todo.filter';
 
 	const form = document.getElementById('todoForm');
 	const input = document.getElementById('todoInput');
@@ -17,6 +18,7 @@
 	const themeToggle = document.getElementById('themeToggle');
 
 	let todos = load();
+	let currentFilter = localStorage.getItem(FILTER_KEY) || 'all';
 
 	function load() {
 		try {
@@ -36,7 +38,13 @@
 
 	function render() {
 		list.innerHTML = '';
-		for (const t of todos) {
+		const filtered = todos.filter(t => {
+			if (currentFilter === 'active') return !t.done;
+			if (currentFilter === 'completed') return t.done;
+			return true;
+		});
+
+		for (const t of filtered) {
 			const li = document.createElement('li');
 			li.className = 'todo-item' + (t.done ? ' done' : '');
 			li.dataset.id = t.id;
@@ -62,8 +70,8 @@
 		const remaining = todos.filter(t => !t.done).length;
 		countEl.textContent = `${remaining} ${remaining === 1 ? 'item' : 'items'} left`;
 		footer.hidden = todos.length === 0;
-		emptyEl.hidden = todos.length > 0;
-		emptyEl.textContent = 'Nothing to do. Add your first task above.';
+		emptyEl.hidden = todos.length > 0 || filtered.length > 0;
+		emptyEl.textContent = currentFilter === 'completed' && filtered.length === 0 ? 'No completed tasks.' : 'Nothing to do. Add your first task above.';
 	}
 
 	form.addEventListener('submit', e => {
@@ -100,6 +108,16 @@
 		render();
 	});
 
+	document.querySelectorAll('.filter-btn').forEach(btn => {
+		btn.addEventListener('click', () => {
+			currentFilter = btn.dataset.filter;
+			localStorage.setItem(FILTER_KEY, currentFilter);
+			document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+			btn.classList.add('active');
+			render();
+		});
+	});
+
 	const savedTheme = localStorage.getItem(THEME_KEY)
 		|| (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
 	document.documentElement.setAttribute('data-theme', savedTheme);
@@ -108,6 +126,12 @@
 		const next = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
 		document.documentElement.setAttribute('data-theme', next);
 		localStorage.setItem(THEME_KEY, next);
+	});
+
+	document.querySelectorAll('.filter-btn').forEach(btn => {
+		if (btn.dataset.filter === currentFilter) {
+			btn.classList.add('active');
+		}
 	});
 
 	render();
