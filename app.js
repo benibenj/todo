@@ -6,6 +6,7 @@
 (() => {
 	const STORAGE_KEY = 'todo.items';
 	const THEME_KEY = 'todo.theme';
+	const FILTER_KEY = 'todo.filter';
 
 	const form = document.getElementById('todoForm');
 	const input = document.getElementById('todoInput');
@@ -15,8 +16,12 @@
 	const clearBtn = document.getElementById('clearCompleted');
 	const emptyEl = document.getElementById('empty');
 	const themeToggle = document.getElementById('themeToggle');
+	const filterAllBtn = document.getElementById('filterAll');
+	const filterActiveBtn = document.getElementById('filterActive');
+	const filterCompletedBtn = document.getElementById('filterCompleted');
 
 	let todos = load();
+	let currentFilter = localStorage.getItem(FILTER_KEY) || 'all';
 
 	function load() {
 		try {
@@ -34,9 +39,28 @@
 		return Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
 	}
 
+	function getFilteredTodos() {
+		switch (currentFilter) {
+			case 'active':
+				return todos.filter(t => !t.done);
+			case 'completed':
+				return todos.filter(t => t.done);
+			default:
+				return todos;
+		}
+	}
+
+	function updateFilterButtons() {
+		filterAllBtn.classList.toggle('active', currentFilter === 'all');
+		filterActiveBtn.classList.toggle('active', currentFilter === 'active');
+		filterCompletedBtn.classList.toggle('active', currentFilter === 'completed');
+	}
+
 	function render() {
 		list.innerHTML = '';
-		for (const t of todos) {
+		const filtered = getFilteredTodos();
+
+		for (const t of filtered) {
 			const li = document.createElement('li');
 			li.className = 'todo-item' + (t.done ? ' done' : '');
 			li.dataset.id = t.id;
@@ -100,6 +124,27 @@
 		render();
 	});
 
+	filterAllBtn.addEventListener('click', () => {
+		currentFilter = 'all';
+		localStorage.setItem(FILTER_KEY, currentFilter);
+		updateFilterButtons();
+		render();
+	});
+
+	filterActiveBtn.addEventListener('click', () => {
+		currentFilter = 'active';
+		localStorage.setItem(FILTER_KEY, currentFilter);
+		updateFilterButtons();
+		render();
+	});
+
+	filterCompletedBtn.addEventListener('click', () => {
+		currentFilter = 'completed';
+		localStorage.setItem(FILTER_KEY, currentFilter);
+		updateFilterButtons();
+		render();
+	});
+
 	const savedTheme = localStorage.getItem(THEME_KEY)
 		|| (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
 	document.documentElement.setAttribute('data-theme', savedTheme);
@@ -110,5 +155,6 @@
 		localStorage.setItem(THEME_KEY, next);
 	});
 
+	updateFilterButtons();
 	render();
 })();
